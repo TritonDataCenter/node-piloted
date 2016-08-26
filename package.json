@@ -1,0 +1,30 @@
+{
+  "name": "piloted",
+  "version": "0.0.0",
+  "description": "Service discovery in node using container pilot",
+  "main": "lib/index.js",
+  "dependencies": {
+    "code": "^3.0.2",
+    "consulite": "^1.2.1",
+    "lab": "^11.0.1"
+  },
+  "devDependencies": {
+    "belly-button": "^3.1.0",
+    "code": "^3.0.2",
+    "lab": "^11.0.1"
+  },
+  "scripts": {
+    "test": "lab -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geek/piloted.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MPL 2",
+  "bugs": {
+    "url": "https://github.com/geek/piloted/issues"
+  },
+  "homepage": "https://github.com/geek/piloted#readme"
+}
