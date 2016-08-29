@@ -1,6 +1,6 @@
 {
   "name": "piloted",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Service discovery in node using ContainerPilot",
   "main": "lib/index.js",
   "dependencies": {
