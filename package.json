@@ -6,7 +6,7 @@
   "dependencies": {
     "consulite": "1.x.x",
     "hoek": "4.x.x",
-    "items": "^2.1.1"
+    "items": "2.x.x"
   },
   "devDependencies": {
     "belly-button": "3.x.x",
@@ -24,7 +24,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MPL 2",
+  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/geek/piloted/issues"
   },
