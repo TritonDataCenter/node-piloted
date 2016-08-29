@@ -107,3 +107,59 @@ describe('Piloted()', () => {
     }
   });
 });
+
+describe('SIGHUP', () => {
+  it('triggers a refresh of the service cache and updates it from consul', (done) => {
+    let ct = 0;
+    const results = [
+      [
+        { Service: { Address: 'node1.com', Port: '1234' } },
+        { Service: { Address: 'node2.com', Port: '1234' } }
+      ],
+      [
+        { Service: { Address: 'node3.com', Port: '5678' } },
+        { Service: { Address: 'node4.com', Port: '5678' } }
+      ]
+    ];
+
+    const server = Http.createServer((req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(results[ct]));
+      ct++;
+    });
+
+    server.listen(0, () => {
+      const config = {
+        consul: `localhost:${server.address().port}`,
+        backends: [
+          {
+            name: 'node'
+          }
+        ]
+      };
+
+      Piloted.config(config, (err) => {
+        expect(err).to.not.exist();
+        expect(Piloted('node').port).to.equal('1234');
+        process.emit('SIGHUP');
+        process.emit('SIGHUP');
+        setTimeout(() => {
+          expect(Piloted('node').port).to.equal('5678');
+          done();
+        }, 200);
+      });
+    });
+  });
+
+  it('won\'t try to refresh if there aren\'t services configured', (done) => {
+    process.emit('SIGHUP');
+    setTimeout(() => {
+      try {
+        Piloted('notknown');
+      } catch (ex) {
+        expect(ex).to.exist();
+        done();
+      }
+    }, 200);
+  });
+});
