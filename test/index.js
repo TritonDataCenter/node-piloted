@@ -18,3 +18,24 @@ it('can be required', (done) => {
   expect(Piloted).to.exist();
   done();
 });
+
+describe('config()', () => {
+  it('loads the configuration into piloted', (done) => {
+    const config = {
+      consul: 'consul:8500',
+      backends: [
+        {
+          name: 'nginx'
+        },
+        {
+          name: 'app'
+        }
+      ]
+    };
+
+    Piloted.config(config, () => {
+      expect(Piloted('nginx')).to.exist();
+      done();
+    });
+  });
+});
