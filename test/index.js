@@ -45,7 +45,12 @@ describe('config()', () => {
 
       Piloted.config(config, () => {
         expect(Piloted('nginx').port).to.equal('1234');
-        done();
+
+        // will resolve a returned promise in absence of callback
+        Piloted.config(config).then(() => {
+          expect(Piloted('nginx').port).to.equal('1234');
+          done();
+        });
       });
     });
   });
@@ -90,7 +95,12 @@ describe('config()', () => {
 
       Piloted.config(config, (err) => {
         expect(err).to.exist();
-        done();
+
+        // will reject a returned promise in absence of callback
+        Piloted.config(config).catch((err) => {
+          expect(err).to.exist();
+          done();
+        });
       });
     });
   });
