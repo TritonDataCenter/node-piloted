@@ -30,7 +30,7 @@ backend that your service depends on.
 
 ### API
 
-#### config(config, callback)
+#### config(config [, callback])
 
 Pass the `containerpilot.json` file as a parsed object. The properties that are
 used by _piloted_ are `consul` and `backends`. These will be used to connect to
@@ -43,6 +43,8 @@ cares about.
   - `CONSUL_PORT`
 * `callback` - function to be executed after the initial cache of service data has
 been loaded. The function signature is `(err)`
+
+If a `callback` is omitted, a `Promise` will be returned.
 
 
 #### (name)

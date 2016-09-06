@@ -6,7 +6,8 @@
   "dependencies": {
     "consulite": "1.x.x",
     "hoek": "4.x.x",
-    "items": "2.x.x"
+    "items": "2.x.x",
+    "or-promise": "1.x.x"
   },
   "devDependencies": {
     "belly-button": "3.x.x",
