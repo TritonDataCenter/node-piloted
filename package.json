@@ -21,13 +21,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/geek/piloted.git"
+    "url": "git+https://github.com/joyent/node-piloted.git"
   },
   "keywords": [],
   "author": "",
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/geek/piloted/issues"
+    "url": "https://github.com/joyent/node-piloted/issues"
   },
-  "homepage": "https://github.com/geek/piloted#readme"
+  "homepage": "https://github.com/joyent/node-piloted#readme"
 }
