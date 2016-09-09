@@ -3,7 +3,7 @@ Service discovery in node using [ContainerPilot](https://www.joyent.com/containe
 
 [![Npm Version](https://img.shields.io/npm/v/piloted.svg)](https://npmjs.com/package/piloted)
 [![Node Version](https://img.shields.io/node/v/piloted.svg)](https://npmjs.com/package/piloted)
-[![Build Status](https://secure.travis-ci.org/geek/piloted.svg)](http://travis-ci.org/geek/piloted)
+[![Build Status](https://secure.travis-ci.org/joyent/node-piloted.svg)](http://travis-ci.org/joyent/node-piloted)
 
 
 ### Usage Example
