@@ -133,7 +133,7 @@ describe('config()', () => {
     });
   });
 
-  it('replaces leaves templates in the config without environment variables', (done) => {
+  it('leaves templates in the config without environment variables', (done) => {
     const server = Http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify([
