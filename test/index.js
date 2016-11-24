@@ -104,6 +104,61 @@ describe('config()', () => {
       });
     });
   });
+
+  it('replaces templated items in the config with environment variables', (done) => {
+    process.env['PILOTED_TEST_HOST'] = 'localhost';
+
+    const server = Http.createServer((req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify([
+        { Service: { Address: 'nginx1.com', Port: '1234' } }
+      ]));
+    });
+
+    server.listen(0, () => {
+      const config = {
+        consul: `{{ .PILOTED_TEST_HOST }}:${server.address().port}`,
+        backends: [
+          {
+            name: 'nginx'
+          }
+        ]
+      };
+
+      Piloted.config(config, () => {
+        expect(Piloted('nginx').port).to.equal('1234');
+        delete process.env['PILOTED_TEST_HOST'];
+        done();
+      });
+    });
+  });
+
+  it('replaces leaves templates in the config without environment variables', (done) => {
+    const server = Http.createServer((req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify([
+        { Service: { Address: 'nginx1.com', Port: '1234' } }
+      ]));
+    });
+
+    server.listen(0, () => {
+      const config = {
+        consul: `localhost:${server.address().port}`,
+        backends: [
+          {
+            name: '{{ .SOME_UNSET_VAR }}'
+          }
+        ]
+      };
+
+      Piloted.config(config, () => {
+        setTimeout(() => {
+          expect(Piloted('{{ .SOME_UNSET_VAR }}').port).to.equal('1234');
+          done();
+        }, 0);
+      });
+    });
+  });
 });
 
 
