@@ -58,3 +58,10 @@ Example:
 ```js
 const service = Piloted('my-service');
 ```
+
+### Templating
+
+Piloted will template your configuration file, similar to the way that
+[ContainerPilot](https://www.joyent.com/containerpilot/docs/configuration)
+does. If you have an environment variable such as `FOO=BAR` then you can use
+`{{.FOO}}` in your configuration file and it will be substituted with `BAR`.
