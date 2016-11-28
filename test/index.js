@@ -199,9 +199,13 @@ describe('Piloted()', () => {
         expect(Piloted('round').address).to.equal('node2.com');
         expect(Piloted('round').address).to.equal('node3.com');
         expect(Piloted('round').address).to.equal('node1.com');
-        expect(Piloted('round').address).to.equal('node2.com');
-        expect(Piloted('round').address).to.equal('node3.com');
-        done();
+
+        setImmediate(() => {
+          expect(Piloted('round').address).to.equal('node2.com');
+          expect(Piloted('round').address).to.equal('node3.com');
+          expect(Piloted('round').address).to.equal('node1.com');
+          done();
+        });
       });
     });
   });
