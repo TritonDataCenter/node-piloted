@@ -171,6 +171,44 @@ describe('Piloted()', () => {
       done();
     }
   });
+
+  it('round-robins addresses', (done) => {
+    const server = Http.createServer((req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(
+        [
+          { Service: { Address: 'node1.com', Port: '1234' } },
+          { Service: { Address: 'node2.com', Port: '1234' } },
+          { Service: { Address: 'node3.com', Port: '1234' } }
+        ]
+      ));
+    });
+
+    server.listen(0, () => {
+      const config = {
+        consul: `localhost:${server.address().port}`,
+        backends: [
+          {
+            name: 'round'
+          }
+        ]
+      };
+
+      Piloted.config(config, (err) => {
+        expect(err).to.not.exist();
+        expect(Piloted('round').address).to.equal('node2.com');
+        expect(Piloted('round').address).to.equal('node3.com');
+        expect(Piloted('round').address).to.equal('node1.com');
+
+        setImmediate(() => {
+          expect(Piloted('round').address).to.equal('node2.com');
+          expect(Piloted('round').address).to.equal('node3.com');
+          expect(Piloted('round').address).to.equal('node1.com');
+          done();
+        });
+      });
+    });
+  });
 });
 
 describe('SIGHUP', () => {
