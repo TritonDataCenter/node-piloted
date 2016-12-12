@@ -65,3 +65,26 @@ Piloted will template your configuration file, similar to the way that
 [ContainerPilot](https://www.joyent.com/containerpilot/docs/configuration)
 does. If you have an environment variable such as `FOO=BAR` then you can use
 `{{.FOO}}` in your configuration file and it will be substituted with `BAR`.
+
+### Events
+`Piloted` implements the [events](https://nodejs.org/docs/latest/api/events.html) interface. Specifically, if you need to know when the data has been updated, you can listen for the `refresh` event:
+
+```js
+Piloted.on('refresh',function () {
+  // update anything that needs to be done
+});
+```
+
+A common use case is long-lived connections, e.g. database connections:
+
+```js
+Piloted(config, (err) => {
+  const service = Piloted('db');
+  var db = createDbConnectionWithFavouriteDriver(service.address, services.port);
+  Piloted.on('refresh',function () {
+    // update anything that needs to be done
+    db.release();
+    db.connect(service.address, service.port);
+  });
+});
+```
