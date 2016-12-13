@@ -265,4 +265,16 @@ describe('SIGHUP', () => {
       }
     }, 200);
   });
+
+  it('passes \'refresh\' event', (done) => {
+    var count = 0;
+    Piloted.on('refresh', function () {
+      count++;
+    });
+    process.emit('SIGHUP');
+    setTimeout(() => {
+      expect(count).to.equal(1);
+      done();
+    }, 200);
+  });
 });
