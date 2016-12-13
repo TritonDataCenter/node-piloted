@@ -5,7 +5,7 @@
 const Http = require('http');
 const Code = require('code');
 const Lab = require('lab');
-const Piloted = require('..');
+let Piloted = require('..');
 
 
 // Test shortcuts
@@ -18,6 +18,44 @@ const expect = Code.expect;
 it('can be required', (done) => {
   expect(Piloted).to.exist();
   done();
+});
+
+it('loads CONTAINERPILOT file configuration from environment', (done) => {
+  delete require.cache[require.resolve('..')];
+  process.env.CONTAINERPILOT = `file://${__dirname}/containerpilot.json`;
+  process.env.PORT = 8000;
+  Piloted = require('..');
+  setTimeout(() => {
+    expect(Piloted._config.backends.length).to.equal(1);
+    delete process.env.CONTAINERPILOT;
+    delete process.env.PORT;
+    delete require.cache[require.resolve('..')];
+    Piloted = require('..');
+    done();
+  }, 10);
+});
+
+it('loads CONTAINERPILOT string configuration from environment', (done) => {
+  const config = {
+    consul: 'localhost:8000',
+    backends: [
+      {
+        name: 'node'
+      }
+    ]
+  };
+
+  delete require.cache[require.resolve('..')];
+  process.env.CONTAINERPILOT = JSON.stringify(config);
+  Piloted = require('..');
+  setTimeout(() => {
+    expect(Piloted._config.backends.length).to.equal(1);
+    delete process.env.CONTAINERPILOT;
+    delete process.env.PORT;
+    delete require.cache[require.resolve('..')];
+    Piloted = require('..');
+    done();
+  }, 10);
 });
 
 describe('config()', () => {
@@ -53,6 +91,15 @@ describe('config()', () => {
         });
       });
     });
+  });
+
+  it('throws if the configuration is not a string or object', (done) => {
+    try {
+      Piloted.config(1);
+    } catch (ex) {
+      expect(ex).to.exist();
+      done();
+    }
   });
 
   it('throws if the configuration is undefined', (done) => {
@@ -241,8 +288,12 @@ describe('SIGHUP', () => {
 
     const server = Http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(results[ct]));
+      if (ct) {
+        return res.end(JSON.stringify(results[1]));
+      }
+
       ct++;
+      return res.end(JSON.stringify(results[0]));
     });
 
     server.listen(0, () => {
