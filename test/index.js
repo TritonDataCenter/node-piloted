@@ -288,8 +288,12 @@ describe('SIGHUP', () => {
 
     const server = Http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(results[ct]));
+      if (ct) {
+        return res.end(JSON.stringify(results[1]));
+      }
+
       ct++;
+      return res.end(JSON.stringify(results[0]));
     });
 
     server.listen(0, () => {
@@ -310,7 +314,7 @@ describe('SIGHUP', () => {
         setTimeout(() => {
           expect(Piloted.service('node').port).to.equal('5678');
           done();
-        }, 100);
+        }, 200);
       });
     });
   });
