@@ -17,7 +17,7 @@ const ContainerPilot = require('./containerpilot.json');
 Piloted.config(ContainerPilot, (err) => {
   // handle error if there is one
 
-  const service = Piloted('customers');
+  const service = Piloted.service('customers');
   Wreck.get(`http://${service.address}:${service.port}/?q=steven`, (err, res, payload) => {
     // handle error or process the payload of customer data
   });
@@ -47,7 +47,7 @@ been loaded. The function signature is `(err)`
 If a `callback` is omitted, a `Promise` will be returned.
 
 
-#### (name)
+#### service(name)
 
 Returns an object (`{ address, port }`) for the named service. If multiple instances
 of a service exist then the first one that hasn't been executed or the oldest instance
@@ -56,7 +56,7 @@ to be executed will be returned.
 Example:
 
 ```js
-const service = Piloted('my-service');
+const service = Piloted.service('my-service');
 ```
 
 ### Templating
@@ -78,10 +78,10 @@ Piloted.on('refresh',function () {
 A common use case is long-lived connections, e.g. database connections:
 
 ```js
-Piloted(config, (err) => {
-  const service = Piloted('db');
-  var db = createDbConnectionWithFavouriteDriver(service.address, services.port);
-  Piloted.on('refresh',function () {
+Piloted.config(config, (err) => {
+  const service = Piloted.service('db');
+  const db = createDbConnectionWithFavouriteDriver(service.address, services.port);
+  Piloted.on('refresh', () => {
     // update anything that needs to be done
     db.release();
     db.connect(service.address, service.port);
