@@ -44,11 +44,11 @@ describe('config()', () => {
       };
 
       Piloted.config(config, () => {
-        expect(Piloted('nginx').port).to.equal('1234');
+        expect(Piloted.service('nginx').port).to.equal('1234');
 
         // will resolve a returned promise in absence of callback
         Piloted.config(config).then(() => {
-          expect(Piloted('nginx').port).to.equal('1234');
+          expect(Piloted.service('nginx').port).to.equal('1234');
           done();
         });
       });
@@ -126,7 +126,7 @@ describe('config()', () => {
       };
 
       Piloted.config(config, () => {
-        expect(Piloted('nginx').port).to.equal('1234');
+        expect(Piloted.service('nginx').port).to.equal('1234');
         delete process.env['PILOTED_TEST_HOST'];
         done();
       });
@@ -153,7 +153,7 @@ describe('config()', () => {
 
       Piloted.config(config, () => {
         setTimeout(() => {
-          expect(Piloted('{{ .SOME_UNSET_VAR }}').port).to.equal('1234');
+          expect(Piloted.service('{{ .SOME_UNSET_VAR }}').port).to.equal('1234');
           done();
         }, 0);
       });
@@ -162,10 +162,10 @@ describe('config()', () => {
 });
 
 
-describe('Piloted()', () => {
+describe('service()', () => {
   it('throws if the backend service isn\'t configured', (done) => {
     try {
-      Piloted('notknown');
+      Piloted.service('notknown');
     } catch (ex) {
       expect(ex).to.exist();
       done();
@@ -196,18 +196,32 @@ describe('Piloted()', () => {
 
       Piloted.config(config, (err) => {
         expect(err).to.not.exist();
-        expect(Piloted('round').address).to.equal('node2.com');
-        expect(Piloted('round').address).to.equal('node3.com');
-        expect(Piloted('round').address).to.equal('node1.com');
+        expect(Piloted.service('round').address).to.equal('node2.com');
+        expect(Piloted.service('round').address).to.equal('node3.com');
+        expect(Piloted.service('round').address).to.equal('node1.com');
 
         setImmediate(() => {
-          expect(Piloted('round').address).to.equal('node2.com');
-          expect(Piloted('round').address).to.equal('node3.com');
-          expect(Piloted('round').address).to.equal('node1.com');
+          expect(Piloted.service('round').address).to.equal('node2.com');
+          expect(Piloted.service('round').address).to.equal('node3.com');
+          expect(Piloted.service('round').address).to.equal('node1.com');
           done();
         });
       });
     });
+  });
+});
+
+describe('refresh()', () => {
+  it('emits \'refresh\' event', (done) => {
+    var count = 0;
+    Piloted.on('refresh', function () {
+      count++;
+    });
+    Piloted.refresh();
+    setTimeout(() => {
+      expect(count).to.equal(1);
+      done();
+    }, 200);
   });
 });
 
@@ -243,11 +257,11 @@ describe('SIGHUP', () => {
 
       Piloted.config(config, (err) => {
         expect(err).to.not.exist();
-        expect(Piloted('node').port).to.equal('1234');
+        expect(Piloted.service('node').port).to.equal('1234');
         process.emit('SIGHUP');
         process.emit('SIGHUP');
         setTimeout(() => {
-          expect(Piloted('node').port).to.equal('5678');
+          expect(Piloted.service('node').port).to.equal('5678');
           done();
         }, 200);
       });
@@ -258,7 +272,7 @@ describe('SIGHUP', () => {
     process.emit('SIGHUP');
     setTimeout(() => {
       try {
-        Piloted('notknown');
+        Piloted.service('notknown');
       } catch (ex) {
         expect(ex).to.exist();
         done();
@@ -266,7 +280,7 @@ describe('SIGHUP', () => {
     }, 200);
   });
 
-  it('passes \'refresh\' event', (done) => {
+  it('emits \'refresh\' event', (done) => {
     var count = 0;
     Piloted.on('refresh', function () {
       count++;
