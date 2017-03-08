@@ -59,6 +59,18 @@ Example:
 const service = Piloted.service('my-service');
 ```
 
+
+#### serviceHosts(name)
+
+Returns an array of objects (`{ address, port }`) for the named service,
+representing all registered instances of the service.
+
+Example:
+
+```js
+const service = Piloted.serviceHosts('my-service');
+```
+
 ### Templating
 
 Piloted will template your configuration file, similar to the way that
