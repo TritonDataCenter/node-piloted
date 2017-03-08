@@ -258,6 +258,54 @@ describe('service()', () => {
   });
 });
 
+
+describe('serviceHosts()', () => {
+  it('throws if the backend service isn\'t configured', (done) => {
+    try {
+      Piloted.serviceHosts('notknown');
+    } catch (ex) {
+      expect(ex).to.exist();
+      done();
+    }
+  });
+
+  it('returns all host objects', (done) => {
+    const server = Http.createServer((req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(
+        [
+          { Service: { Address: 'node1.com', Port: '1234' } },
+          { Service: { Address: 'node2.com', Port: '1234' } },
+          { Service: { Address: 'node3.com', Port: '1234' } }
+        ]
+      ));
+    });
+
+    server.listen(0, () => {
+      const config = {
+        consul: `localhost:${server.address().port}`,
+        backends: [
+          {
+            name: 'round'
+          }
+        ]
+      };
+
+      Piloted.config(config, (err) => {
+        expect(err).to.not.exist();
+        expect(Piloted.serviceHosts('round').length).to.equal(3);
+        expect(Piloted.serviceHosts('round')[0].address).to.equal('node1.com');
+        expect(Piloted.serviceHosts('round')[0].port).to.equal('1234');
+        expect(Piloted.serviceHosts('round')[1].address).to.equal('node2.com');
+        expect(Piloted.serviceHosts('round')[1].port).to.equal('1234');
+        expect(Piloted.serviceHosts('round')[2].address).to.equal('node3.com');
+        expect(Piloted.serviceHosts('round')[2].port).to.equal('1234');
+        done();
+      });
+    });
+  });
+});
+
 describe('refresh()', () => {
   it('emits \'refresh\' event', (done) => {
     var count = 0;

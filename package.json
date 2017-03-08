@@ -4,7 +4,7 @@
   "description": "Service discovery in node using ContainerPilot",
   "main": "lib/index.js",
   "dependencies": {
-    "consulite": "1.x.x",
+    "consulite": "^1.6.0",
     "hoek": "4.x.x",
     "items": "2.x.x",
     "or-promise": "1.x.x"
