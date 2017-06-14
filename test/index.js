@@ -3,7 +3,6 @@
 // Load modules
 
 const Http = require('http');
-const Code = require('code');
 const Lab = require('lab');
 let Piloted = require('..');
 
@@ -13,7 +12,7 @@ let Piloted = require('..');
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 it('can be required', (done) => {
   expect(Piloted).to.exist();
@@ -22,11 +21,11 @@ it('can be required', (done) => {
 
 it('loads CONTAINERPILOT file configuration from environment', (done) => {
   delete require.cache[require.resolve('..')];
-  process.env.CONTAINERPILOT = `file://${__dirname}/containerpilot.json`;
+  process.env.CONTAINERPILOT = `file://${__dirname}/containerpilot.json5`;
   process.env.PORT = 8000;
   Piloted = require('..');
   setTimeout(() => {
-    expect(Piloted._config.backends.length).to.equal(1);
+    expect(Piloted._config.watches.length).to.equal(1);
     delete process.env.CONTAINERPILOT;
     delete process.env.PORT;
     delete require.cache[require.resolve('..')];
@@ -38,7 +37,7 @@ it('loads CONTAINERPILOT file configuration from environment', (done) => {
 it('loads CONTAINERPILOT string configuration from environment', (done) => {
   const config = {
     consul: 'localhost:8000',
-    backends: [
+    watches: [
       {
         name: 'node'
       }
@@ -49,7 +48,7 @@ it('loads CONTAINERPILOT string configuration from environment', (done) => {
   process.env.CONTAINERPILOT = JSON.stringify(config);
   Piloted = require('..');
   setTimeout(() => {
-    expect(Piloted._config.backends.length).to.equal(1);
+    expect(Piloted._config.watches.length).to.equal(1);
     delete process.env.CONTAINERPILOT;
     delete process.env.PORT;
     delete require.cache[require.resolve('..')];
@@ -71,7 +70,7 @@ describe('config()', () => {
     server.listen(0, () => {
       const config = {
         consul: `localhost:${server.address().port}`,
-        backends: [
+        watches: [
           {
             name: 'nginx'
           },
@@ -111,19 +110,6 @@ describe('config()', () => {
     }
   });
 
-  it('throws if the configuration is missing backends', (done) => {
-    const config = {
-      consul: 'consul:8500'
-    };
-
-    try {
-      Piloted.config(config);
-    } catch (ex) {
-      expect(ex).to.exist();
-      done();
-    }
-  });
-
   it('returns an error on the callback if consul returns one', (done) => {
     const server = Http.createServer((req, res) => {
       res.writeHead(500);
@@ -133,7 +119,7 @@ describe('config()', () => {
     server.listen(0, () => {
       const config = {
         consul: `localhost:${server.address().port}`,
-        backends: [
+        watches: [
           {
             name: 'backend'
           }
@@ -165,7 +151,7 @@ describe('config()', () => {
     server.listen(0, () => {
       const config = {
         consul: `{{ .PILOTED_TEST_HOST }}:${server.address().port}`,
-        backends: [
+        watches: [
           {
             name: 'nginx'
           }
@@ -191,7 +177,7 @@ describe('config()', () => {
     server.listen(0, () => {
       const config = {
         consul: `localhost:${server.address().port}`,
-        backends: [
+        watches: [
           {
             name: '{{ .SOME_UNSET_VAR }}'
           }
@@ -234,7 +220,7 @@ describe('service()', () => {
     server.listen(0, () => {
       const config = {
         consul: `localhost:${server.address().port}`,
-        backends: [
+        watches: [
           {
             name: 'round'
           }
@@ -284,7 +270,7 @@ describe('serviceHosts()', () => {
     server.listen(0, () => {
       const config = {
         consul: `localhost:${server.address().port}`,
-        backends: [
+        watches: [
           {
             name: 'round'
           }
@@ -347,7 +333,7 @@ describe('SIGHUP', () => {
     server.listen(0, () => {
       const config = {
         consul: `localhost:${server.address().port}`,
-        backends: [
+        watches: [
           {
             name: 'node'
           }

@@ -24,6 +24,19 @@ Piloted.config(ContainerPilot, (err) => {
 });
 ```
 
+In the `containerpilot.json` file make sure to have a job to send SIGHUP to the node process when a watched service changes. For example, if you care about changes to influxdb services, the job would look like the following:
+
+```
+{
+  name: 'onchange-influxdb',
+  exec: 'pkill -SIGHUP node',
+  when: {
+    source: 'watch.influxdb',
+    each: 'changed'
+  }
+}
+```
+
 A cache is maintained by piloted and will be refreshed anytime ContainerPilot sends
 a SIGHUP to the process. This will occur when there is a service change to a
 backend that your service depends on.
@@ -33,11 +46,11 @@ backend that your service depends on.
 #### config(config [, callback])
 
 Pass the `containerpilot.json` file as a parsed object. The properties that are
-used by _piloted_ are `consul` and `backends`. These will be used to connect to
+used by _piloted_ are `consul` and `watches`. These will be used to connect to
 the consul server and will maintain a cache of the backends that your service
 cares about.
 
-* `config` - configuration object with `consul` and `backends` properties. `consul` can
+* `config` - configuration object with `consul` and `watches` properties. `consul` can
   be omitted and the values will be pulled from the environment variables:
   - `CONSUL_HOST`
   - `CONSUL_PORT`
