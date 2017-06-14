@@ -34,18 +34,10 @@ it('loads CONTAINERPILOT file configuration from environment', (done) => {
   }, 10);
 });
 
-it('loads CONTAINERPILOT string configuration from environment', (done) => {
-  const config = {
-    consul: 'localhost:8000',
-    watches: [
-      {
-        name: 'node'
-      }
-    ]
-  };
-
+it('loads CONTAINERPILOT file configuration from environment without file://', (done) => {
   delete require.cache[require.resolve('..')];
-  process.env.CONTAINERPILOT = JSON.stringify(config);
+  process.env.CONTAINERPILOT = `${__dirname}/containerpilot.json5`;
+  process.env.PORT = 8000;
   Piloted = require('..');
   setTimeout(() => {
     expect(Piloted._config.watches.length).to.equal(1);
