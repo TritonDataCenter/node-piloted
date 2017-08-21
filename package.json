@@ -4,20 +4,20 @@
   "description": "Service discovery in node using ContainerPilot",
   "main": "lib/index.js",
   "dependencies": {
-    "consulite": "1.6.x",
+    "consulite": "2.x.x",
     "hoek": "4.x.x",
     "items": "2.x.x",
     "json5": "0.5.x",
     "or-promise": "1.x.x"
   },
   "devDependencies": {
-    "belly-button": "3.x.x",
+    "belly-button": "4.x.x",
     "lab": "14.x.x"
   },
   "scripts": {
     "lint": "belly-button",
     "pretest": "npm run lint",
-    "test": "lab -c"
+    "test": "lab -t 100"
   },
   "repository": {
     "type": "git",
