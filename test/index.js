@@ -78,9 +78,21 @@ describe('config()', () => {
         // will resolve a returned promise in absence of callback
         Piloted.config(config).then(() => {
           expect(Piloted.service('nginx').port).to.equal('1234');
+          server.close();
           done();
         });
       });
+    });
+  });
+
+  it('won\'t throw when missing watches', (done) => {
+    const config = {
+      consul: 'localhost:8500'
+    };
+
+    Piloted.config(config, (err) => {
+      expect(err).to.not.exist();
+      done();
     });
   });
 
