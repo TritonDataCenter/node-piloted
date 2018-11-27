@@ -43,6 +43,8 @@ Pass the `containerpilot.json5` file as a parsed object. The properties that are
   be omitted and the values will be pulled from the environment variables:
   - `CONSUL_HOST`
   - `CONSUL_PORT`
+
+  However, if you specify the `consul` property, _piloted_ expects the value to be a string.
 * `callback` - function to be executed after the initial cache of service data has
 been loaded. The function signature is `(err)`
 
